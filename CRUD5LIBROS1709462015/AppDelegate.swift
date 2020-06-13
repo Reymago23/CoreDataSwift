@@ -1,10 +1,5 @@
-//
-//  AppDelegate.swift
-//  CRUD5LIBROS1709462015
-//
-//  Created by Miguel on 6/12/20.
-//  Copyright © 2020 UTEC. All rights reserved.
-//
+// Joscelyn Beatriz Guido Martinez
+// 17-0946-2015
 
 import UIKit
 import CoreData

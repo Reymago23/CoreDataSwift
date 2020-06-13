@@ -14,6 +14,10 @@
 		49FC0FCB24944931001E9465 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 49FC0FC924944931001E9465 /* Main.storyboard */; };
 		49FC0FCD24944931001E9465 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 49FC0FCC24944931001E9465 /* Assets.xcassets */; };
 		49FC0FD024944931001E9465 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 49FC0FCE24944931001E9465 /* LaunchScreen.storyboard */; };
+		49FC0FD824944A65001E9465 /* BookModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49FC0FD724944A65001E9465 /* BookModel.swift */; };
+		49FC0FDA24944F4D001E9465 /* AddBookViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49FC0FD924944F4D001E9465 /* AddBookViewController.swift */; };
+		49FC0FDD249465C2001E9465 /* Libro+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49FC0FDB249465C2001E9465 /* Libro+CoreDataClass.swift */; };
+		49FC0FDE249465C2001E9465 /* Libro+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49FC0FDC249465C2001E9465 /* Libro+CoreDataProperties.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -26,6 +30,10 @@
 		49FC0FCC24944931001E9465 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		49FC0FCF24944931001E9465 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		49FC0FD124944931001E9465 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		49FC0FD724944A65001E9465 /* BookModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BookModel.swift; sourceTree = "<group>"; };
+		49FC0FD924944F4D001E9465 /* AddBookViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddBookViewController.swift; sourceTree = "<group>"; };
+		49FC0FDB249465C2001E9465 /* Libro+CoreDataClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Libro+CoreDataClass.swift"; sourceTree = "<group>"; };
+		49FC0FDC249465C2001E9465 /* Libro+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Libro+CoreDataProperties.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -42,6 +50,8 @@
 		49FC0FB424944930001E9465 = {
 			isa = PBXGroup;
 			children = (
+				49FC0FDB249465C2001E9465 /* Libro+CoreDataClass.swift */,
+				49FC0FDC249465C2001E9465 /* Libro+CoreDataProperties.swift */,
 				49FC0FBF24944931001E9465 /* CRUD5LIBROS1709462015 */,
 				49FC0FBE24944931001E9465 /* Products */,
 			);
@@ -66,6 +76,8 @@
 				49FC0FCE24944931001E9465 /* LaunchScreen.storyboard */,
 				49FC0FD124944931001E9465 /* Info.plist */,
 				49FC0FC224944931001E9465 /* CRUD5LIBROS1709462015.xcdatamodeld */,
+				49FC0FD724944A65001E9465 /* BookModel.swift */,
+				49FC0FD924944F4D001E9465 /* AddBookViewController.swift */,
 			);
 			path = CRUD5LIBROS1709462015;
 			sourceTree = "<group>";
@@ -143,9 +155,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				49FC0FC124944931001E9465 /* AppDelegate.swift in Sources */,
+				49FC0FDA24944F4D001E9465 /* AddBookViewController.swift in Sources */,
 				49FC0FC424944931001E9465 /* CRUD5LIBROS1709462015.xcdatamodeld in Sources */,
 				49FC0FC624944931001E9465 /* MasterViewController.swift in Sources */,
+				49FC0FDE249465C2001E9465 /* Libro+CoreDataProperties.swift in Sources */,
 				49FC0FC824944931001E9465 /* DetailViewController.swift in Sources */,
+				49FC0FDD249465C2001E9465 /* Libro+CoreDataClass.swift in Sources */,
+				49FC0FD824944A65001E9465 /* BookModel.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

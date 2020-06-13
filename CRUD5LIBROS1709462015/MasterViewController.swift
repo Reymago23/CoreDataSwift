@@ -1,24 +1,25 @@
-//
-//  MasterViewController.swift
-//  CRUD5LIBROS1709462015
-//
-//  Created by Miguel on 6/12/20.
-//  Copyright © 2020 UTEC. All rights reserved.
-//
+// Joscelyn Beatriz Guido Martinez
+// 17-0946-2015
 
 import UIKit
 import CoreData
 
-class MasterViewController: UITableViewController, NSFetchedResultsControllerDelegate {
+class MasterViewController: UITableViewController, NSFetchedResultsControllerDelegate, BookStoreDelegate {
 
     var detailViewController: DetailViewController? = nil
-    var managedObjectContext: NSManagedObjectContext? = nil
+    var managedObjectContext: NSManagedObjectContext!
 
+    var books: [AnyObject] = []
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view, typically from a nib.
+        
         self.navigationItem.leftBarButtonItem = self.editButtonItem
+        
+        let appDelegate: AppDelegate = UIApplication.shared.delegate as! AppDelegate
+        managedObjectContext = appDelegate.persistentContainer.viewContext as NSManagedObjectContext
+        
+        loadData()
 
         let addButton = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(insertNewObject(_:)))
         self.navigationItem.rightBarButtonItem = addButton
@@ -35,25 +36,10 @@ class MasterViewController: UITableViewController, NSFetchedResultsControllerDel
 
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
     }
 
     func insertNewObject(_ sender: Any) {
-        let context = self.fetchedResultsController.managedObjectContext
-        let newEvent = Event(context: context)
-             
-        // If appropriate, configure the new managed object.
-        newEvent.timestamp = NSDate()
-
-        // Save the context.
-        do {
-            try context.save()
-        } catch {
-            // Replace this implementation with code to handle the error appropriately.
-            // fatalError() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
-            let nserror = error as NSError
-            fatalError("Unresolved error \(nserror), \(nserror.userInfo)")
-        }
+        self.performSegue(withIdentifier: "addBookSegue", sender: nil)
     }
 
     // MARK: - Segues
@@ -61,30 +47,106 @@ class MasterViewController: UITableViewController, NSFetchedResultsControllerDel
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "showDetail" {
             if let indexPath = self.tableView.indexPathForSelectedRow {
-            let object = self.fetchedResultsController.object(at: indexPath)
+                let book: Libro = books[indexPath.row] as! Libro
                 let controller = (segue.destination as! UINavigationController).topViewController as! DetailViewController
-                controller.detailItem = object
+                controller.detailItem = book
+                controller.delegate = self                
                 controller.navigationItem.leftBarButtonItem = self.splitViewController?.displayModeButtonItem
                 controller.navigationItem.leftItemsSupplementBackButton = true
             }
         }
+        else if segue.identifier == "addBookSegue" {
+            let vc = segue.destination as! AddBookViewController
+            vc.delegate = self
+        }
     }
 
+    func loadData(){
+        let fetchRequest: NSFetchRequest<Libro> = Libro.fetchRequest()
+        
+        do{
+            books = try managedObjectContext.fetch(fetchRequest)
+        }catch let error as NSError{
+            NSLog("Error: %@", error)
+        }
+    }
+    
+    
+    func newBook(_ controller:AnyObject,newBook:BookModel) {
+        
+        let book: Libro = NSEntityDescription.insertNewObject(forEntityName: "Libro", into: managedObjectContext) as! Libro
+        
+        book.title = newBook.title
+        book.author = newBook.author
+        book.pages = newBook.pages
+        book.publicationYear = newBook.publicationYear
+        
+        do {
+            try managedObjectContext.save()
+            self.loadData()
+            tableView.reloadData()
+            _ = navigationController?.popViewController(animated: true)
+        }catch let error as NSError {
+            NSLog("Error: %@", error)
+        }
+        
+    }
+    
+    
+    
+    func deleteBook(_ controller:AnyObject){
+        let indexPath = tableView.indexPathForSelectedRow
+        let row = (indexPath as NSIndexPath?)?.row
+        
+        self.managedObjectContext.delete(self.books[row!] as! NSManagedObject)
+        
+        do {
+            try managedObjectContext.save()
+            self.loadData()
+            tableView.reloadData()
+            _ = navigationController?.popViewController(animated: true)
+        }catch let error as NSError {
+            NSLog("Error: %@", error)
+        }
+        
+    }
+    
+    
+    
+    func editBook(_ controller:AnyObject, editBook:BookModel){
+        let indexPath = tableView.indexPathForSelectedRow
+        let row = (indexPath as NSIndexPath?)?.row
+        let book = books[row!] as! NSManagedObject
+        
+        book.setValue(editBook.author, forKey: "author")
+        book.setValue(NSNumber(value:editBook.pages), forKey: "pages")
+        book.setValue(NSNumber(value:editBook.publicationYear), forKey: "publicationYear")
+        book.setValue(editBook.title, forKey: "title")
+        
+        do {
+            try managedObjectContext.save()
+            self.loadData()
+            tableView.reloadData()
+            _ = navigationController?.popViewController(animated: true)
+        }catch let error as NSError {
+            NSLog("Error: %@", error)
+        }
+    }
+    
     // MARK: - Table View
 
     override func numberOfSections(in tableView: UITableView) -> Int {
-        return self.fetchedResultsController.sections?.count ?? 0
+        return 1
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        let sectionInfo = self.fetchedResultsController.sections![section]
-        return sectionInfo.numberOfObjects
+        return books.count
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath)
-        let event = self.fetchedResultsController.object(at: indexPath)
-        self.configureCell(cell, withEvent: event)
+        cell.textLabel?.text = books[indexPath.row].title
+        cell.accessoryType = .disclosureIndicator
         return cell
     }
 
@@ -95,17 +157,40 @@ class MasterViewController: UITableViewController, NSFetchedResultsControllerDel
 
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
-            let context = self.fetchedResultsController.managedObjectContext
-            context.delete(self.fetchedResultsController.object(at: indexPath))
+            //let context = self.fetchedResultsController.managedObjectContext
+            // context.delete(self.fetchedResultsController.object(at: indexPath))
+            
+            let alertControler = UIAlertController(title: "Atencion", message: "Borrar este libro permanentemente?", preferredStyle: .alert)
+            let noAction = UIAlertAction(title: "No", style: .cancel, handler: {
+                (action) in print("cancel")
+            })
+            
+            alertControler.addAction(noAction)
+            
+            let yesAction = UIAlertAction(title: "Si", style: .destructive, handler: {
+                (action) in
                 
-            do {
-                try context.save()
-            } catch {
-                // Replace this implementation with code to handle the error appropriately.
-                // fatalError() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
-                let nserror = error as NSError
-                fatalError("Unresolved error \(nserror), \(nserror.userInfo)")
-            }
+                self.managedObjectContext.delete(self.books[indexPath.row] as! NSManagedObject)
+                
+                do {
+                    //try context.save()
+                    try self.managedObjectContext.save()
+                    self.loadData()
+                    tableView.reloadData()
+                    _ = self.navigationController?.popViewController(animated: true)
+                    
+                } catch {
+                    // Replace this implementation with code to handle the error appropriately.
+                    // fatalError() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
+                    let nserror = error as NSError
+                    fatalError("Unresolved error \(nserror), \(nserror.userInfo)")
+                }
+            })
+            
+            alertControler.addAction(yesAction)
+            
+            present(alertControler, animated: false, completion: nil)
+            
         }
     }
 
